@@ -8,7 +8,7 @@ import mido
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from os import listdir
-from os.path import isfile,join
+from os.path import isfile, join
 
 
 note_matrix = [[0 for x in range(88)]]
@@ -45,20 +45,21 @@ def convert_append_note(note_dict_int, timetick, binary = False):
 
         note_matrix[timetick][note_dict_int['note'] - 21] = note_dict_int['velocity']
 
-    else:  # empty WHYYY
+    else:  # empty
         note_matrix[timetick][:] = note_matrix[timetick - 1][:]
         pass
 
     #print(str(timetick) + '  ' + str(note_matrix[:][-1]))
 
 
-def convert_file(file_name, undersampling_divider=1, binary=False):
+def midi_to_numpy(file_name, undersampling_divider=1, binary=False):
     """Converts given file into glrglrbr
     Returns BMP-like matrix of midi file"""
     global note_matrix
     note_matrix = [[0 for x in range(88)]]
     mid = mido.MidiFile(file_name)
 
+    print('file: ' + file_name)
     print('tracks: ' + str(len(mid.tracks)))
 
     for trindex, track in enumerate(mid.tracks):
@@ -89,9 +90,10 @@ def convert_file(file_name, undersampling_divider=1, binary=False):
 
             print('tr#' + str(trindex + 1) + ' ' + str(index) + '/' + str(len(track)))
         # print(in_tick_cnt)
+    return note_matrix
 
 
-def save_note_matrix(file_path):
+def save_note_matrix(file_path, note_matrix=note_matrix):
     def batch(iterable, n=1):
         l = len(iterable)
         for ndx in range(0, l, n):
@@ -110,9 +112,9 @@ def convert_folder(folder_path, unders = 1, inclusive = False):
     file_list = [join(folder_path, f) for f in listdir(folder_path) if isfile(join(folder_path, f))]
 
     for file_path in file_list:
-        convert_file(file_path, unders, binary=False)
+        midi_to_numpy(file_path, unders, binary=False)
         output_path = 'result_png/' + file_path.split('\\')[-1] + '_us_' + str(unders)
-        save_note_matrix(output_path)
+        save_note_matrix(output_path, note_matrix)
 
 # midi_path = 'midi_data/Classical_mfiles.co.uk_MIDIRip/Waltz-op64-no2.mid'
 # unders_div = 10
@@ -129,5 +131,5 @@ def convert_folder(folder_path, unders = 1, inclusive = False):
 # convert_file('Waltz_OUTPUT_OP64_2.mid')
 # save_note_matrix('Waltz-DOUBLE-no2.mid')
 
-convert_file('midi_data/Classical_mfiles.co.uk_MIDIRip/Waltz-op64-no2.mid')
-save_note_matrix('Waltz-op64-no2.mid')
+# midi_to_numpy('midi_data/Classical_mfiles.co.uk_MIDIRip/Waltz-op64-no2.mid')
+# save_note_matrix('Waltz-op64-no2.mid', note_matrix)

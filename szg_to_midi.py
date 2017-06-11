@@ -54,6 +54,11 @@ def numpy_to_midi(note_matrix, file_mid):
                             Message('note_on', note=note + 21, velocity=time_row[note], time=timetick_differential))
                         last_msg_timetick = timetick
 
+    track.append(Message('note_on', note=50, velocity=1, time=len(note_matrix)))  # end of file marker
+    track.append(Message('note_off', note=50, velocity=0, time=len(note_matrix)))  # end of file marker
+    # track.append(Message('note_on', note=48, velocity=0, time=len(note_matrix)+2))  # end of file marker
+
+
     mid.save(file_mid)  # save and close midi file
 
 
@@ -64,4 +69,4 @@ def pngs_to_midi(file_png, file_mid):
     numpy_to_midi(note_matrix, file_mid)
 
 
-pngs_to_midi('Waltz-op64-no2.mid_pt_1.png', 'Waltz_OUTPUT_OP64_2.mid')
+# pngs_to_midi('Waltz-op64-no2.mid_pt_1.png', 'Waltz_OUTPUT_OP64_2.mid')
